@@ -14,13 +14,13 @@ class HomePage extends StatelessWidget {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(now);
     String city = "Sevilla";
-    String api_key = "ffbf5ebe736d7abd05216bf7742623e7";
+    String apiKey = "ffbf5ebe736d7abd05216bf7742623e7";
     String long = "-6.0025700";
-    String lat = "37.3827100";
+    String lat = "37.3886303";
     String weather = "Light Drizzle";
     String temp = "22";
     late Future<WeatherResponse> tiempoActualFuture =
-        getCurrentWeatherCity(lat, long, api_key);
+        getCurrentWeatherCity(lat, long, apiKey);
 
     return Scaffold(
         body: Container(
@@ -365,9 +365,9 @@ class HomePage extends StatelessWidget {
   }
 
   Future<WeatherResponse> getCurrentWeatherCity(
-      String lat, String long, String api_key) async {
+      String lat, String long, String apiKey) async {
     final response = await http.get(Uri.parse(
-        "api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${api_key}"));
+        "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$long&appid=$apiKey"));
 
     if (response.statusCode == 200) {
       return WeatherResponse.fromJson(jsonDecode(response.body));
