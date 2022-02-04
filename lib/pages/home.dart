@@ -159,9 +159,10 @@ class HomePage extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 15),
                               child: Image.network(
                                 /*"https://icon-library.com/images/rain-icon-png/rain-icon-png-25.jpg"*/
-                                "http://openweathermap.org/img/w/" +
+                                "http://openweathermap.org/img/wn/" +
                                     snapshot.data!.weather[0].icon +
-                                    ".png",
+                                    "@2x.png",
+                                scale: 0.2,
                                 width: 200,
                               ),
                             ),
