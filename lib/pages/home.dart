@@ -13,19 +13,20 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(now);
-    String city = "Sevilla";
     String apiKey = "ffbf5ebe736d7abd05216bf7742623e7";
     String long = "-6.0025700";
     String lat = "37.3886303";
-    String weather = "Light Drizzle";
-    String temp = "22";
     double kelvinDegrees = -273.15;
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
 
     late Future<WeatherResponse> tiempoActualFuture =
         getCurrentWeatherCity(lat, long, apiKey);
 
     return Scaffold(
         body: Container(
+            width: queryData.size.width,
+            height: queryData.size.height,
             padding: const EdgeInsets.only(top: 10),
             child: Center(
                 child: FutureBuilder<WeatherResponse>(
@@ -35,7 +36,7 @@ class HomePage extends StatelessWidget {
                   return Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 70.0, left: 30),
+                        padding: const EdgeInsets.only(top: 60.0, left: 20),
                         child: Row(
                           children: [
                             Column(
@@ -58,18 +59,23 @@ class HomePage extends StatelessWidget {
                               ],
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 170.0),
+                              padding: const EdgeInsets.only(left: 135.0),
                               child: Row(
-                                children: const [
-                                  Icon(
-                                    Icons.map_outlined,
-                                    color: Color(0xFF616161),
-                                    size: 30.0,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.map_outlined,
+                                      color: Color(0xFF616161),
+                                      size: 30.0,
+                                    ),
+                                    tooltip: 'Abrir lista de ciudades',
+                                    onPressed: () => Navigator.pushNamed(
+                                        context, '/ciudades'),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 20.0),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 10.0),
                                     child: Icon(
-                                      Icons.settings_outlined,
+                                      Icons.mode_night_outlined,
                                       color: Color(0xFF616161),
                                       size: 30.0,
                                     ),
@@ -81,7 +87,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 50.0),
+                        padding: const EdgeInsets.only(top: 30.0),
                         child: Column(
                           children: [
                             Text(
@@ -93,7 +99,7 @@ class HomePage extends StatelessWidget {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.only(left: 100.0, top: 15),
+                                  const EdgeInsets.only(left: 70.0, top: 10),
                               child: Row(
                                 children: [
                                   Text(
@@ -102,11 +108,10 @@ class HomePage extends StatelessWidget {
                                         .toString(),
                                     style: GoogleFonts.ptSans(
                                         textStyle: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 100)),
+                                            color: Colors.black, fontSize: 80)),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 35.0),
+                                    padding: const EdgeInsets.only(top: 30.0),
                                     child: Text(
                                       'ºC',
                                       style: GoogleFonts.ptSans(
@@ -120,7 +125,7 @@ class HomePage extends StatelessWidget {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.only(left: 125.0, top: 10),
+                                  const EdgeInsets.only(left: 80.0, top: 10),
                               child: Row(
                                 children: [
                                   const Icon(Icons.arrow_downward_outlined,
@@ -156,18 +161,17 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 15),
+                              padding: const EdgeInsets.only(top: 0),
                               child: Image.network(
                                 /*"https://icon-library.com/images/rain-icon-png/rain-icon-png-25.jpg"*/
                                 "http://openweathermap.org/img/wn/" +
                                     snapshot.data!.weather[0].icon +
                                     "@2x.png",
-                                scale: 0.2,
-                                width: 200,
+                                scale: 0.7,
                               ),
                             ),
                             Padding(
-                                padding: const EdgeInsets.only(top: 10),
+                                padding: const EdgeInsets.only(top: 0),
                                 child: Text(
                                   snapshot.data!.weather[0].description,
                                   style: GoogleFonts.ptSans(
@@ -177,7 +181,7 @@ class HomePage extends StatelessWidget {
                                           fontWeight: FontWeight.w600)),
                                 )),
                             Padding(
-                              padding: const EdgeInsets.only(left: 90, top: 40),
+                              padding: const EdgeInsets.only(left: 50, top: 30),
                               child: Row(
                                 children: [
                                   const Icon(Icons.wb_twighlight,

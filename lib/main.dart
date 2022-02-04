@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/pages/home.dart';
+import 'package:weather_app/pages/lista_ciudades.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
-      routes: {'/': (context) => const HomePage()},
+      routes: {
+        '/': (context) => const HomePage(),
+        '/ciudades': (context) => const listaCiudades()
+      },
     );
   }
 }
