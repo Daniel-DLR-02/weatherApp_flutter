@@ -24,9 +24,7 @@ class HomePage extends StatelessWidget {
         getCurrentWeatherCity(lat, long, apiKey);
 
     return Scaffold(
-        body: Container(
-            width: queryData.size.width,
-            height: queryData.size.height,
+        body: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 10),
             child: Center(
                 child: FutureBuilder<WeatherResponse>(
@@ -97,67 +95,137 @@ class HomePage extends StatelessWidget {
                                       color: Color(0xFF616161), fontSize: 20),
                                   fontWeight: FontWeight.w600),
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 70.0, top: 10),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    (snapshot.data!.main.temp + kelvinDegrees)
-                                        .roundToDouble()
-                                        .toString(),
-                                    style: GoogleFonts.ptSans(
-                                        textStyle: const TextStyle(
-                                            color: Colors.black, fontSize: 80)),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 30.0),
-                                    child: Text(
-                                      'ºC',
-                                      style: GoogleFonts.ptSans(
-                                          textStyle: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 50)),
+                            SizedBox(
+                              height: 150,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 40.0, top: 0),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 120.0,
+                                      width: 140.0,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            (snapshot.data!.main.temp! +
+                                                    kelvinDegrees)
+                                                .floor()
+                                                .toString(),
+                                            style: GoogleFonts.ptSans(
+                                                textStyle: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 70)),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0),
+                                            child: Text(
+                                              'ºC',
+                                              style: GoogleFonts.ptSans(
+                                                  textStyle: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 50)),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 80.0, top: 10),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.arrow_downward_outlined,
-                                      color: Color(0xFF616161)),
-                                  Text(
-                                    (snapshot.data!.main.tempMin +
-                                                kelvinDegrees)
-                                            .roundToDouble()
-                                            .toString() +
-                                        'ºC',
-                                    style: GoogleFonts.ptSans(
-                                        textStyle: const TextStyle(
-                                            color: Color(0xFF616161),
-                                            fontSize: 20)),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 20.0),
-                                    child: Icon(Icons.arrow_upward_outlined,
-                                        color: Color(0xFF616161)),
-                                  ),
-                                  Text(
-                                    (snapshot.data!.main.tempMax +
-                                                kelvinDegrees)
-                                            .roundToDouble()
-                                            .toString() +
-                                        'ºC',
-                                    style: GoogleFonts.ptSans(
-                                        textStyle: const TextStyle(
-                                            color: Color(0xFF616161),
-                                            fontSize: 20)),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20.0, top: 46),
+                                      child: SizedBox(
+                                        height: 120.0,
+                                        width: 150.0,
+                                        child: Row(
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                        Icons
+                                                            .arrow_downward_outlined,
+                                                        color:
+                                                            Color(0xFF616161)),
+                                                    Text(
+                                                      (snapshot.data!.main
+                                                                      .tempMin! +
+                                                                  kelvinDegrees)
+                                                              .floor()
+                                                              .toString() +
+                                                          'ºC /',
+                                                      style: GoogleFonts.ptSans(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF616161),
+                                                                  fontSize:
+                                                                      20)),
+                                                    ),
+                                                    const Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: .0),
+                                                      child: Icon(
+                                                          Icons
+                                                              .arrow_upward_outlined,
+                                                          color: Color(
+                                                              0xFF616161)),
+                                                    ),
+                                                    Text(
+                                                      (snapshot.data!.main
+                                                                      .tempMax! +
+                                                                  kelvinDegrees)
+                                                              .floor()
+                                                              .toString() +
+                                                          'ºC',
+                                                      style: GoogleFonts.ptSans(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF616161),
+                                                                  fontSize:
+                                                                      20)),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text('Feels like: ',
+                                                          style: GoogleFonts.ptSans(
+                                                              textStyle: const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF616161),
+                                                                  fontSize:
+                                                                      20))),
+                                                      Text(
+                                                          (snapshot.data!.main
+                                                                          .feelsLike! +
+                                                                      kelvinDegrees)
+                                                                  .floor()
+                                                                  .toString() +
+                                                              'ºC',
+                                                          style: GoogleFonts.ptSans(
+                                                              textStyle: const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF616161),
+                                                                  fontSize:
+                                                                      20))),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             Padding(
@@ -190,7 +258,8 @@ class HomePage extends StatelessWidget {
                                     DateFormat('HH:MM')
                                             .format(DateTime
                                                 .fromMillisecondsSinceEpoch(
-                                                    snapshot.data!.sys.sunrise *
+                                                    snapshot.data!.sys
+                                                            .sunrise! *
                                                         1000))
                                             .toString() +
                                         ' AM',
@@ -208,7 +277,7 @@ class HomePage extends StatelessWidget {
                                     DateFormat('HH:MM')
                                             .format(DateTime
                                                 .fromMillisecondsSinceEpoch(
-                                                    snapshot.data!.sys.sunset *
+                                                    snapshot.data!.sys.sunset! *
                                                         1000))
                                             .toString() +
                                         ' PM',
@@ -222,7 +291,18 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(left: 0, top: 30),
+                          child: Column(
+                            children: [
+                              Text('Hourly forecast:',
+                                  style: GoogleFonts.ptSans(
+                                      textStyle: const TextStyle(
+                                          color: Color(0xFF616161),
+                                          fontSize: 20))),
+                            ],
+                          ))
                     ],
                   );
                 } else if (snapshot.hasError) {

@@ -18,15 +18,15 @@ class WeatherResponse {
   late final List<Weather> weather;
   late final String base;
   late final Main main;
-  late final int visibility;
+  late final int? visibility;
   late final Wind wind;
   late final Clouds clouds;
-  late final int dt;
+  late final int? dt;
   late final Sys sys;
-  late final int timezone;
-  late final int id;
+  late final int? timezone;
+  late final int? id;
   late final String name;
-  late final int cod;
+  late final int? cod;
 
   WeatherResponse.fromJson(Map<String, dynamic> json) {
     coord = Coord.fromJson(json['coord']);
@@ -34,12 +34,12 @@ class WeatherResponse {
         List.from(json['weather']).map((e) => Weather.fromJson(e)).toList();
     base = json['base'];
     main = Main.fromJson(json['main']);
-    visibility = json['visibility'];
+    visibility = json['visibility']?.toInt();
     wind = Wind.fromJson(json['wind']);
     clouds = Clouds.fromJson(json['clouds']);
-    dt = json['dt'];
+    dt = json['dt']?.toInt();
     sys = Sys.fromJson(json['sys']);
-    timezone = json['timezone'];
+    timezone = json['timezone']?.toInt();
     id = json['id'];
     name = json['name'];
     cod = json['cod'];
@@ -69,12 +69,12 @@ class Coord {
     required this.lon,
     required this.lat,
   });
-  late final double lon;
-  late final double lat;
+  late final double? lon;
+  late final double? lat;
 
   Coord.fromJson(Map<String, dynamic> json) {
-    lon = json['lon'];
-    lat = json['lat'];
+    lon = json['lon']?.toDouble();
+    lat = json['lat']?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
@@ -92,7 +92,7 @@ class Weather {
     required this.description,
     required this.icon,
   });
-  late final int id;
+  late final int? id;
   late final String main;
   late final String description;
   late final String icon;
@@ -123,20 +123,20 @@ class Main {
     required this.pressure,
     required this.humidity,
   });
-  late final double temp;
-  late final double feelsLike;
-  late final double tempMin;
-  late final double tempMax;
-  late final int pressure;
-  late final int humidity;
+  late final double? temp;
+  late final double? feelsLike;
+  late final double? tempMin;
+  late final double? tempMax;
+  late final int? pressure;
+  late final int? humidity;
 
   Main.fromJson(Map<String, dynamic> json) {
-    temp = json['temp'];
-    feelsLike = json['feels_like'];
-    tempMin = json['temp_min'];
-    tempMax = json['temp_max'];
-    pressure = json['pressure'];
-    humidity = json['humidity'];
+    temp = json['temp']?.toDouble();
+    feelsLike = json['feels_like']?.toDouble();
+    tempMin = json['temp_min']?.toDouble();
+    tempMax = json['temp_max']?.toDouble();
+    pressure = json['pressure']?.toInt();
+    humidity = json['humidity']?.toInt();
   }
 
   Map<String, dynamic> toJson() {
@@ -156,12 +156,12 @@ class Wind {
     required this.speed,
     required this.deg,
   });
-  late final double speed;
+  late final double? speed;
   late final int deg;
 
   Wind.fromJson(Map<String, dynamic> json) {
-    speed = json['speed'];
-    deg = json['deg'];
+    speed = json['speed']?.toDouble();
+    deg = json['deg']?.toInt();
   }
 
   Map<String, dynamic> toJson() {
@@ -198,20 +198,20 @@ class Sys {
     required this.sunrise,
     required this.sunset,
   });
-  late final int type;
-  late final int id;
+  late final int? type;
+  late final int? id;
   late final double? message;
   late final String country;
-  late final int sunrise;
-  late final int sunset;
+  late final int? sunrise;
+  late final int? sunset;
 
   Sys.fromJson(Map<String, dynamic> json) {
-    type = json['type'];
+    type = json['type']?.toInt();
     id = json['id'];
-    message = json['message'];
+    message = json['message']?.toDouble();
     country = json['country'];
-    sunrise = json['sunrise'];
-    sunset = json['sunset'];
+    sunrise = json['sunrise']?.toInt();
+    sunset = json['sunset']?.toInt();
   }
 
   Map<String, dynamic> toJson() {
