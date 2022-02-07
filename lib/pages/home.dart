@@ -5,12 +5,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_app/model/weather.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+import '../model/one_call.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(now);
     String apiKey = "ffbf5ebe736d7abd05216bf7742623e7";
@@ -19,9 +25,12 @@ class HomePage extends StatelessWidget {
     double kelvinDegrees = -273.15;
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
+    String id = "2510911";
 
     late Future<WeatherResponse> tiempoActualFuture =
         getCurrentWeatherCity(lat, long, apiKey);
+
+    late Future<List<Hourly>> temps = fetchHourly(lat, long, apiKey);
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -99,7 +108,7 @@ class HomePage extends StatelessWidget {
                               height: 150,
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 40.0, top: 0),
+                                    const EdgeInsets.only(left: 20.0, top: 0),
                                 child: Row(
                                   children: [
                                     SizedBox(
@@ -133,10 +142,10 @@ class HomePage extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 20.0, top: 46),
+                                          left: 17.0, top: 46),
                                       child: SizedBox(
                                         height: 120.0,
-                                        width: 150.0,
+                                        width: 155.0,
                                         child: Row(
                                           children: [
                                             Column(
@@ -255,7 +264,7 @@ class HomePage extends StatelessWidget {
                                   const Icon(Icons.wb_twighlight,
                                       color: Color(0xFF616161)),
                                   Text(
-                                    DateFormat('HH:MM')
+                                    DateFormat('HH:mm')
                                             .format(DateTime
                                                 .fromMillisecondsSinceEpoch(
                                                     snapshot.data!.sys
@@ -274,7 +283,7 @@ class HomePage extends StatelessWidget {
                                         color: Color(0xFF616161)),
                                   ),
                                   Text(
-                                    DateFormat('HH:MM')
+                                    DateFormat('HH:mm')
                                             .format(DateTime
                                                 .fromMillisecondsSinceEpoch(
                                                     snapshot.data!.sys.sunset! *
@@ -293,16 +302,31 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                          padding: const EdgeInsets.only(left: 0, top: 30),
-                          child: Column(
-                            children: [
-                              Text('Hourly forecast:',
-                                  style: GoogleFonts.ptSans(
-                                      textStyle: const TextStyle(
-                                          color: Color(0xFF616161),
-                                          fontSize: 20))),
-                            ],
-                          ))
+                        padding: const EdgeInsets.only(left: 0, top: 30),
+                        child: Column(
+                          children: [
+                            Text('Hourly forecast:',
+                                style: GoogleFonts.ptSans(
+                                    textStyle: const TextStyle(
+                                        color: Color(0xFF616161),
+                                        fontSize: 20))),
+                            SizedBox(
+                              height: 250,
+                              child: FutureBuilder<List<Hourly>>(
+                                future: temps,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return _weatherList(snapshot.data!);
+                                  } else if (snapshot.hasError) {
+                                    return Text('${snapshot.error}');
+                                  }
+                                  return const CircularProgressIndicator();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   );
                 } else if (snapshot.hasError) {
@@ -313,6 +337,78 @@ class HomePage extends StatelessWidget {
                 return const CircularProgressIndicator();
               },
             ))));
+  }
+
+  Widget _weatherList(List<Hourly> listaWeather) {
+    return ListView.builder(
+      itemCount: listaWeather.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return _weatherItem(listaWeather.elementAt(index), index);
+      },
+    );
+  }
+
+  Widget _weatherItem(Hourly weather, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, top: 20.0),
+      child: SizedBox(
+        width: 140,
+        height: 100,
+        child: Card(
+            color: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    "http://openweathermap.org/img/wn/" +
+                        weather.weather[0].icon +
+                        "@2x.png",
+                    scale: .8,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 1.0),
+                  child: Column(
+                    children: [
+                      Text(
+                          DateFormat('HH:mm')
+                              .format(DateTime.fromMillisecondsSinceEpoch(
+                                  weather.dt * 1000))
+                              .toString(),
+                          style: GoogleFonts.ptSans(
+                              textStyle: const TextStyle(
+                                  color: Color(0xFF616161), fontSize: 20))),
+                      Text(
+                          weather.weather[0].main +
+                              " | " +
+                              weather.temp.toInt().toString() +
+                              "ºC",
+                          style: GoogleFonts.ptSans(
+                              textStyle: const TextStyle(
+                                  color: Color(0xFF616161), fontSize: 20))),
+                    ],
+                  ),
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+
+  Future<List<Hourly>> fetchHourly(
+      String lat, String long, String apiKey) async {
+    final response = await http.get(Uri.parse(
+        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$long&exclude=minutely&appid=$apiKey&units=metric'));
+    if (response.statusCode == 200) {
+      return OneCallModel.fromJson(jsonDecode(response.body)).hourly;
+    } else {
+      throw Exception('Failed to load planets');
+    }
   }
 
   Future<WeatherResponse> getCurrentWeatherCity(
