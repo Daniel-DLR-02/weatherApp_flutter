@@ -32,6 +32,8 @@ class HomePage extends StatelessWidget {
 
     late Future<List<Hourly>> temps = fetchHourly(lat, long, apiKey);
 
+    late Future<List<Daily>> temps_week = fetchWeekely(lat, long, apiKey);
+
     return Scaffold(
         body: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 10),
@@ -326,6 +328,32 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 0, top: 5),
+                        child: Column(
+                          children: [
+                            Text('Daily forecast:',
+                                style: GoogleFonts.ptSans(
+                                    textStyle: const TextStyle(
+                                        color: Color(0xFF616161),
+                                        fontSize: 20))),
+                            SizedBox(
+                              height: 250,
+                              child: FutureBuilder<List<Daily>>(
+                                future: temps_week,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return _weekList(snapshot.data!);
+                                  } else if (snapshot.hasError) {
+                                    return Text('${snapshot.error}');
+                                  }
+                                  return const CircularProgressIndicator();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   );
@@ -349,17 +377,23 @@ class HomePage extends StatelessWidget {
     );
   }
 
+
+  Widget _weekList(List<Daily> listaWeather) {
+    return ListView.builder(
+      itemCount: listaWeather.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return _weekWeatherItem(listaWeather.elementAt(index), index);
+      },
+    );
+  }
+
   Widget _weatherItem(Hourly weather, int index) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, top: 20.0),
+      padding: const EdgeInsets.only(left: 0, top: 20.0),
       child: SizedBox(
-        width: 140,
+        width: 100,
         height: 100,
-        child: Card(
-            color: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
             child: Column(
               children: [
                 ClipRRect(
@@ -382,7 +416,7 @@ class HomePage extends StatelessWidget {
                               .toString(),
                           style: GoogleFonts.ptSans(
                               textStyle: const TextStyle(
-                                  color: Color(0xFF616161), fontSize: 20))),
+                                  color: Color(0xFF616161), fontSize: 15))),
                       Text(
                           weather.weather[0].main +
                               " | " +
@@ -390,12 +424,58 @@ class HomePage extends StatelessWidget {
                               "ºC",
                           style: GoogleFonts.ptSans(
                               textStyle: const TextStyle(
-                                  color: Color(0xFF616161), fontSize: 20))),
+                                  color: Color(0xFF616161), fontSize: 15))),
                     ],
                   ),
                 ),
               ],
-            )),
+            )
+      ),
+    );
+  }
+
+    Widget _weekWeatherItem(Daily weather, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 0, top: 20.0),
+      child: SizedBox(
+        width: 100,
+        height: 100,
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    "http://openweathermap.org/img/wn/" +
+                        weather.weather[0].icon +
+                        "@2x.png",
+                    scale: .8,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 1.0),
+                  child: Column(
+                    children: [
+                      Text(
+                          DateFormat('EEEE')
+                              .format(DateTime.fromMillisecondsSinceEpoch(
+                                  weather.dt * 1000))
+                              .toString(),
+                          style: GoogleFonts.ptSans(
+                              textStyle: const TextStyle(
+                                  color: Color(0xFF616161), fontSize: 15))),
+                      Text(
+                          weather.weather[0].main +
+                              " | " +
+                              weather.temp.eve.toInt().toString() +
+                              "ºC",
+                          style: GoogleFonts.ptSans(
+                              textStyle: const TextStyle(
+                                  color: Color(0xFF616161), fontSize: 15))),
+                    ],
+                  ),
+                ),
+              ],
+            )
       ),
     );
   }
@@ -406,6 +486,17 @@ class HomePage extends StatelessWidget {
         'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$long&exclude=minutely&appid=$apiKey&units=metric'));
     if (response.statusCode == 200) {
       return OneCallModel.fromJson(jsonDecode(response.body)).hourly;
+    } else {
+      throw Exception('Failed to load planets');
+    }
+  }
+
+    Future<List<Daily>> fetchWeekely(
+      String lat, String long, String apiKey) async {
+    final response = await http.get(Uri.parse(
+        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$long&exclude=minutely&appid=$apiKey&units=metric'));
+    if (response.statusCode == 200) {
+      return OneCallModel.fromJson(jsonDecode(response.body)).daily;
     } else {
       throw Exception('Failed to load planets');
     }
