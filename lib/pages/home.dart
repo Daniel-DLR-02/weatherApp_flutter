@@ -21,13 +21,18 @@ class HomePage extends StatelessWidget {
     ]);
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(now);
-    String apiKey = "ffbf5ebe736d7abd05216bf7742623e7";
+    String apiKey = "3ecd5757f18a51b757a9c7d601e6f07b";
     String long = "-6.0025700";
     String lat = "37.3886303";
     double kelvinDegrees = -273.15;
     late Future<WeatherResponse> tiempoActualFuture =
         getCurrentWeatherCity(lat, long, apiKey);
-    bool nightTheme = true;
+
+    late Future<List<Hourly>> temps = fetchHourly(lat, long, apiKey);
+
+    late Future<List<Daily>> tempsWeek = fetchWeekely(lat, long, apiKey);
+
+    bool nightTheme = false;
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -303,7 +308,7 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                /*Padding(
+                Padding(
                   padding: const EdgeInsets.only(left: 0, top: 30),
                   child: Column(
                     children: [
@@ -352,7 +357,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                )*/
+                )
               ],
             ),
           );
