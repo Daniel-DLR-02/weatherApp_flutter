@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ]);
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(now);
-    String apiKey = "3ecd5757f18a51b757a9c7d601e6f07b";
+    String apiKey = "ffbf5ebe736d7abd05216bf7742623e7";
     String long = "-6.0025700";
     String lat = "37.3886303";
     double kelvinDegrees = -273.15;
