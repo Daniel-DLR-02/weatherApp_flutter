@@ -11,6 +11,7 @@ import '../model/one_call.dart';
 import '../styles/styles.dart';
 import "string_extension.dart";
 import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,27 +21,54 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  Color backgroundColor = Styles.dayBackGroundColor;
+  late Animation<Color?> animation1 = ColorTween(
+          begin: Styles.dayBackGroundColor, end: Styles.nightBackGroundColor)
+      .animate(controller)
+    ..addListener(() {
+      setState(() {
+        // The state that has changed here is the animation object’s value.
+      });
+    });
+  late Animation<Color?> animation2 =
+      ColorTween(begin: Colors.white, end: Colors.black).animate(controller)
+        ..addListener(() {
+          setState(() {
+            // The state that has changed here is the animation object’s value.
+          });
+        });
+  late AnimationController controller =
+      AnimationController(duration: const Duration(seconds: 1), vsync: this);
   late bool _nightTheme = false;
-  late AnimationController _controller;
-  late Animation<Color?> _color;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 5),
-      vsync: this,
-    )..repeat(reverse: true);
+    controller =
+        AnimationController(duration: const Duration(seconds: 1), vsync: this);
+    animation1 = ColorTween(
+            begin: Styles.dayBackGroundColor, end: Styles.nightBackGroundColor)
+        .animate(controller)
+      ..addListener(() {
+        setState(() {
+          // The state that has changed here is the animation object’s value.
+        });
+      });
+    animation2 =
+        ColorTween(begin: Colors.white, end: Colors.black).animate(controller)
+          ..addListener(() {
+            setState(() {
+              // The state that has changed here is the animation object’s value.
+            });
+          });
   }
 
-  void _changeTheme() {
-    if (_nightTheme == false) {
-      _nightTheme = true;
+  void animateColor() {
+    if (_nightTheme) {
+      controller.forward();
     } else {
-      _nightTheme = false;
+      controller.reverse();
     }
-    setState(() {});
+    _nightTheme = !_nightTheme;
   }
 
   @override
@@ -76,10 +104,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 end: const Alignment(
                     1, 2), // 10% of the width, so there are ten blinds.
                 colors: <Color>[
-                  _nightTheme
-                      ? Styles.nightBackGroundColor
-                      : Styles.dayBackGroundColor,
-                  _nightTheme ? Colors.black : Colors.white
+                  animation1.value as Color,
+                  animation2.value as Color
                 ], // red to yellow
                 tileMode:
                     TileMode.mirror, // repeats the gradient over the canvas
@@ -132,7 +158,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   size: 30.0,
                                 ),
                                 tooltip: 'Activar modo oscuro',
-                                onPressed: () => {_changeTheme()},
+                                onPressed: () => {animateColor()},
                               ),
                             ),
                           ],
