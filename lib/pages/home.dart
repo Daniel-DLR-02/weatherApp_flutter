@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import '../model/one_call.dart';
 import '../styles/styles.dart';
 import "string_extension.dart";
+import 'package:flutter/animation.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,21 +19,25 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Color backgroundColor = Styles.dayBackGroundColor;
   late bool _nightTheme = false;
+  late AnimationController _controller;
+  late Animation<Color?> _color;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 5),
+      vsync: this,
+    )..repeat(reverse: true);
   }
 
   void _changeTheme() {
     if (_nightTheme == false) {
-      backgroundColor = Styles.nightBackGroundColor;
       _nightTheme = true;
     } else {
-      backgroundColor = Styles.dayBackGroundColor;
       _nightTheme = false;
     }
     setState(() {});
@@ -334,22 +339,24 @@ class _HomePageState extends State<HomePage> {
                           style: GoogleFonts.ptSans(
                               textStyle: const TextStyle(
                                   color: Styles.textColor, fontSize: 20))),
-                      SizedBox(
-                        height: 250,
-                        child: FutureBuilder<List<Hourly>>(
-                          future: temps,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return _weatherList(snapshot.data!);
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator());
-                          },
-                        ),
+                      FutureBuilder<List<Hourly>>(
+                        future: temps,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return SizedBox(
+                                height: 250,
+                                child: _weatherList(snapshot.data!));
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50.0),
+                            child: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator()),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -362,22 +369,23 @@ class _HomePageState extends State<HomePage> {
                           style: GoogleFonts.ptSans(
                               textStyle: const TextStyle(
                                   color: Styles.textColor, fontSize: 20))),
-                      SizedBox(
-                        height: 250,
-                        child: FutureBuilder<List<Daily>>(
-                          future: tempsWeek,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return _weekList(snapshot.data!);
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator());
-                          },
-                        ),
+                      FutureBuilder<List<Daily>>(
+                        future: tempsWeek,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return SizedBox(
+                                height: 250, child: _weekList(snapshot.data!));
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50.0),
+                            child: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator()),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -390,8 +398,11 @@ class _HomePageState extends State<HomePage> {
         }
 
         // By default, show a loading spinner.
-        return const SizedBox(
-            width: 50, height: 50, child: CircularProgressIndicator());
+        return const Padding(
+          padding: EdgeInsets.only(top: 350.0),
+          child: SizedBox(
+              width: 50, height: 50, child: CircularProgressIndicator()),
+        );
       },
     ))));
   }
