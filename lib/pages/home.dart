@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,8 +11,32 @@ import '../model/one_call.dart';
 import '../styles/styles.dart';
 import "string_extension.dart";
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Color backgroundColor = Styles.dayBackGroundColor;
+  late bool _nightTheme = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _changeTheme() {
+    if (_nightTheme == false) {
+      backgroundColor = Styles.nightBackGroundColor;
+      _nightTheme = true;
+    } else {
+      backgroundColor = Styles.dayBackGroundColor;
+      _nightTheme = false;
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +57,6 @@ class HomePage extends StatelessWidget {
 
     late Future<List<Daily>> tempsWeek = fetchWeekely(lat, long, apiKey);
 
-    bool nightTheme = false;
-
     return Scaffold(
         body: SingleChildScrollView(
             child: Center(
@@ -48,10 +71,10 @@ class HomePage extends StatelessWidget {
                 end: const Alignment(
                     1, 2), // 10% of the width, so there are ten blinds.
                 colors: <Color>[
-                  nightTheme
+                  _nightTheme
                       ? Styles.nightBackGroundColor
                       : Styles.dayBackGroundColor,
-                  nightTheme ? Colors.black : Colors.white
+                  _nightTheme ? Colors.black : Colors.white
                 ], // red to yellow
                 tileMode:
                     TileMode.mirror, // repeats the gradient over the canvas
@@ -104,12 +127,7 @@ class HomePage extends StatelessWidget {
                                   size: 30.0,
                                 ),
                                 tooltip: 'Activar modo oscuro',
-                                onPressed: () => {
-                                  if (nightTheme == false)
-                                    {nightTheme = true}
-                                  else
-                                    {nightTheme = false},
-                                },
+                                onPressed: () => {_changeTheme()},
                               ),
                             ),
                           ],
@@ -326,7 +344,10 @@ class HomePage extends StatelessWidget {
                             } else if (snapshot.hasError) {
                               return Text('${snapshot.error}');
                             }
-                            return const CircularProgressIndicator();
+                            return const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator());
                           },
                         ),
                       ),
@@ -351,7 +372,10 @@ class HomePage extends StatelessWidget {
                             } else if (snapshot.hasError) {
                               return Text('${snapshot.error}');
                             }
-                            return const CircularProgressIndicator();
+                            return const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator());
                           },
                         ),
                       ),
@@ -366,7 +390,8 @@ class HomePage extends StatelessWidget {
         }
 
         // By default, show a loading spinner.
-        return const CircularProgressIndicator();
+        return const SizedBox(
+            width: 50, height: 50, child: CircularProgressIndicator());
       },
     ))));
   }
