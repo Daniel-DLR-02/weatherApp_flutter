@@ -36,15 +36,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             // The state that has changed here is the animation object’s value.
           });
         });
-  late AnimationController controller =
-      AnimationController(duration: const Duration(seconds: 1), vsync: this);
+  late AnimationController controller = AnimationController(
+      duration: const Duration(milliseconds: 250), vsync: this);
   late bool _nightTheme = false;
 
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: const Duration(seconds: 1), vsync: this);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 250), vsync: this);
     animation1 = ColorTween(
             begin: Styles.dayBackGroundColor, end: Styles.nightBackGroundColor)
         .animate(controller)
