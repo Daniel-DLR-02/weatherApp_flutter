@@ -343,9 +343,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         future: temps,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return SizedBox(
-                                height: 250,
-                                child: _weatherList(snapshot.data!));
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Center(
+                                child: Container(
+                                  width: 340,
+                                  decoration: BoxDecoration(
+                                      color:
+                                          Colors.grey.shade200.withOpacity(0.5),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: SizedBox(
+                                      height: 150,
+                                      child: _weatherList(snapshot.data!)),
+                                ),
+                              ),
+                            );
                           } else if (snapshot.hasError) {
                             return Text('${snapshot.error}');
                           }
@@ -362,7 +375,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 0, top: 5),
+                  padding: const EdgeInsets.only(left: 0, top: 30),
                   child: Column(
                     children: [
                       Text('Daily forecast:',
@@ -373,8 +386,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         future: tempsWeek,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return SizedBox(
-                                height: 250, child: _weekList(snapshot.data!));
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 10.0, bottom: 20),
+                              child: Center(
+                                child: Container(
+                                  width: 340,
+                                  decoration: BoxDecoration(
+                                      color:
+                                          Colors.grey.shade200.withOpacity(0.5),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: SizedBox(
+                                      height: 150,
+                                      child: _weekList(snapshot.data!)),
+                                ),
+                              ),
+                            );
                           } else if (snapshot.hasError) {
                             return Text('${snapshot.error}');
                           }
@@ -429,7 +457,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _weatherItem(Hourly weather, int index) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0, top: 20.0),
+      padding: const EdgeInsets.only(left: 0, top: 10.0),
       child: SizedBox(
           width: 100,
           height: 100,
@@ -473,7 +501,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _weekWeatherItem(Daily weather, int index) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0, top: 20.0),
+      padding: const EdgeInsets.only(left: 0, top: 10.0),
       child: SizedBox(
           width: 100,
           height: 100,
@@ -548,13 +576,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       throw Exception('Failed to load weather');
     }
   }
-
-  /*void _changeBackgroundColor(BuildContext context) {
-    if (nightTheme == false) {
-      nightTheme = true;
-    } else {
-      nightTheme = false;
-    }
-    Navigator.pushNamed(context, '/');
-  }*/
 }
