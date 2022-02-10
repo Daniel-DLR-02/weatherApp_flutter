@@ -98,7 +98,8 @@ class _MapClickBodyState extends State<_MapClickBody> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.restorablePopAndPushNamed(context, '/');
+          setState((){});
+          Navigator.popAndPushNamed(context, '/');
         },
         backgroundColor: Styles.dayBackGroundColor,
         child: const Icon(Icons.navigation),

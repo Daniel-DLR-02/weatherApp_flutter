@@ -2,12 +2,9 @@
 
 import 'dart:convert';
 import 'dart:core';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/model/weather.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -15,13 +12,7 @@ import 'package:weather_app/utils/prefence.dart';
 import '../utils/data.dart';
 import '../model/one_call.dart';
 import '../styles/styles.dart';
-import 'pantalla_seleccion_mapa.dart';
 import '../utils/string_extension.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -169,7 +160,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ),
                               tooltip: 'Abrir lista de ciudades',
                               onPressed: () =>
-                                  Navigator.pushNamed(context, '/ciudades'),
+                                  Navigator.popAndPushNamed(context, '/ciudades'),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 7.0),
