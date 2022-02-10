@@ -11,12 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/model/weather.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
-import 'package:weather_app/pages/prefence.dart';
-import '../data.dart';
+import 'package:weather_app/utils/prefence.dart';
+import '../utils/data.dart';
 import '../model/one_call.dart';
 import '../styles/styles.dart';
 import 'pantalla_seleccion_mapa.dart';
-import "string_extension.dart";
+import '../utils/string_extension.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -48,19 +48,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
   late AnimationController controller = AnimationController(
       duration: const Duration(milliseconds: 250), vsync: this);
-  late bool _nightTheme = false;
-  //late double lat, long;
+  late bool _nightTheme;
+
+
+  late Future<WeatherResponse> tiempoActualFuture;
+  late Future<List<Hourly>> temps;  
+  late Future<List<Daily>> tempsWeek;
+
+  late String formattedDate;
+  late double kelvinDegrees;
 
   @override
   void initState() {
+    _nightTheme = false;
     super.initState();
-    //long = -6.0025700;
-    //lat = 37.3886303;
-    PreferenceUtils.init();
-
-    PreferenceUtils.setDouble('lat', Data.lat);
-    PreferenceUtils.setDouble('lng', Data.long);
-
+    PreferenceUtils.init().whenComplete(() => setState((){}));
+    formattedDate =
+        DateFormat('EEEE,dd MMMM yyyy').format(DateTime.now());
+    kelvinDegrees = -273.15;
+    
     controller = AnimationController(
         duration: const Duration(milliseconds: 250), vsync: this);
     animation1 = ColorTween(
@@ -95,19 +101,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    String formattedDate =
-        DateFormat('EEEE,dd MMMM yyyy').format(DateTime.now());
-    double kelvinDegrees = -273.15;
-
-    late Future<WeatherResponse> tiempoActualFuture = getCurrentWeatherCity(
+    tiempoActualFuture=getCurrentWeatherCity(
         PreferenceUtils.getDouble('lat').toString(),
         PreferenceUtils.getDouble('lng').toString(),
         Data.apiKey);
-
-    //late Future<List<Hourly>> temps = fetchHourly(lat, long, Data.apiKey);
-
-    //late Future<List<Daily>> tempsWeek = fetchWeekely(lat, long, Data.apiKey);
-
+    temps = fetchHourly(PreferenceUtils.getDouble('lat').toString(),
+        PreferenceUtils.getDouble('lng').toString(), Data.apiKey);
+    tempsWeek=fetchWeekely(PreferenceUtils.getDouble('lat').toString(),
+        PreferenceUtils.getDouble('lng').toString(), Data.apiKey);
     return Scaffold(
         body: SingleChildScrollView(
             child: Center(
@@ -378,7 +379,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                /*Padding(
+                Padding(
                   padding: const EdgeInsets.only(left: 0, top: 30),
                   child: Column(
                     children: [
@@ -464,7 +465,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ],
                   ),
-                )*/
+                )
               ],
             ),
           );

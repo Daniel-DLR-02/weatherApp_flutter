@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:weather_app/pages/page.dart';
-import 'package:weather_app/pages/prefence.dart';
+import 'package:weather_app/utils/page.dart';
+import 'package:weather_app/utils/prefence.dart';
+
+import '../styles/styles.dart';
+import '../utils/data.dart';
 
 CameraPosition _kInitialPosition =
-    CameraPosition(target: LatLng(37.3754865, -5.9250989), zoom: 11.0);
+    const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 11.0);
 
 class MapClickPage extends GoogleMapExampleAppPage {
   const MapClickPage() : super(const Icon(Icons.mouse), 'Map click');
@@ -26,7 +29,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
   _MapClickBodyState();
 
   GoogleMapController? mapController;
-  LatLng _lastTap = LatLng(37.3754865, -5.9250989);
+  LatLng _lastTap = LatLng(Data.lat, Data.long);
   LatLng? _lastLongPress;
 
   coor() async {
@@ -38,13 +41,14 @@ class _MapClickBodyState extends State<_MapClickBody> {
       _kInitialPosition = CameraPosition(target: _lastTap, zoom: 10.0);
     } else {
       _kInitialPosition = const CameraPosition(
-          target: LatLng(37.3754865, -5.9250989), zoom: 11.0);
-      return _lastTap = const LatLng(37.3754865, -5.9250989);
+          target: LatLng(Data.lat, Data.long), zoom: 11.0);
+      return _lastTap =  const LatLng(Data.lat, Data.long);
     }
   }
 
   @override
   void initState() {
+    PreferenceUtils.init().whenComplete(() => setState((){}));
     coor();
     super.initState();
   }
@@ -52,6 +56,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
   @override
   Widget build(BuildContext context) {
     final GoogleMap googleMap = GoogleMap(
+      mapType: MapType.hybrid,
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
       onTap: (LatLng pos) async {
@@ -71,13 +76,13 @@ class _MapClickBodyState extends State<_MapClickBody> {
 
     final List<Widget> columnChildren = <Widget>[
       Padding(
-        padding: const EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 0.0),
         child: Column(
           children: [
             Center(
               child: SizedBox(
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height - 300,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
                 child: googleMap,
               ),
             ),
@@ -85,10 +90,19 @@ class _MapClickBodyState extends State<_MapClickBody> {
         ),
       ),
     ];
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: columnChildren,
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: columnChildren,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.restorablePopAndPushNamed(context, '/');
+        },
+        backgroundColor: Styles.dayBackGroundColor,
+        child: const Icon(Icons.navigation),
+      ),
     );
   }
 
