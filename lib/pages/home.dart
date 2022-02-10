@@ -1,17 +1,27 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:convert';
 import 'dart:core';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/model/weather.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:weather_app/pages/prefence.dart';
+import '../data.dart';
 import '../model/one_call.dart';
 import '../styles/styles.dart';
+import 'pantalla_seleccion_mapa.dart';
 import "string_extension.dart";
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -39,10 +49,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController controller = AnimationController(
       duration: const Duration(milliseconds: 250), vsync: this);
   late bool _nightTheme = false;
+  //late double lat, long;
 
   @override
   void initState() {
     super.initState();
+    //long = -6.0025700;
+    //lat = 37.3886303;
+    PreferenceUtils.init();
+
+    PreferenceUtils.setDouble('lat', Data.lat);
+    PreferenceUtils.setDouble('lng', Data.long);
+
     controller = AnimationController(
         duration: const Duration(milliseconds: 250), vsync: this);
     animation1 = ColorTween(
@@ -77,18 +95,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(now);
-    String apiKey = "ffbf5ebe736d7abd05216bf7742623e7";
-    String long = "-6.0025700";
-    String lat = "37.3886303";
+    String formattedDate =
+        DateFormat('EEEE,dd MMMM yyyy').format(DateTime.now());
     double kelvinDegrees = -273.15;
-    late Future<WeatherResponse> tiempoActualFuture =
-        getCurrentWeatherCity(lat, long, apiKey);
 
-    late Future<List<Hourly>> temps = fetchHourly(lat, long, apiKey);
+    late Future<WeatherResponse> tiempoActualFuture = getCurrentWeatherCity(
+        PreferenceUtils.getDouble('lat').toString(),
+        PreferenceUtils.getDouble('lng').toString(),
+        Data.apiKey);
 
-    late Future<List<Daily>> tempsWeek = fetchWeekely(lat, long, apiKey);
+    //late Future<List<Hourly>> temps = fetchHourly(lat, long, Data.apiKey);
+
+    //late Future<List<Daily>> tempsWeek = fetchWeekely(lat, long, Data.apiKey);
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -117,26 +135,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   padding: const EdgeInsets.only(top: 60.0, left: 20),
                   child: Row(
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            snapshot.data!.name,
-                            style: GoogleFonts.openSans(
-                                textStyle: const TextStyle(
-                                    color: Styles.textColor, fontSize: 30),
-                                fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            'Current Location',
-                            style: GoogleFonts.openSans(
-                                textStyle: const TextStyle(
-                                    color: Styles.textColor, fontSize: 10),
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                      SizedBox(
+                        width: 170,
+                        child: Column(
+                          children: [
+                            Text(
+                              snapshot.data!.name,
+                              style: GoogleFonts.openSans(
+                                  textStyle: const TextStyle(
+                                      color: Styles.textColor, fontSize: 20),
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            Text(
+                              'Current Location',
+                              style: GoogleFonts.openSans(
+                                  textStyle: const TextStyle(
+                                      color: Styles.textColor, fontSize: 10),
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 120.0),
+                        padding: const EdgeInsets.only(left: 60.0),
                         child: Row(
                           children: [
                             IconButton(
@@ -357,7 +378,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Padding(
+                /*Padding(
                   padding: const EdgeInsets.only(left: 0, top: 30),
                   child: Column(
                     children: [
@@ -443,7 +464,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ],
                   ),
-                )
+                )*/
               ],
             ),
           );
@@ -576,7 +597,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (response.statusCode == 200) {
       return OneCallModel.fromJson(jsonDecode(response.body)).hourly;
     } else {
-      throw Exception('Failed to load planets');
+      throw Exception('Failed to load weather');
     }
   }
 
@@ -594,7 +615,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<WeatherResponse> getCurrentWeatherCity(
       String lat, String long, String apiKey) async {
     final response = await http.get(Uri.parse(
-        "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$long&appid=$apiKey"));
+        "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=$apiKey"));
 
     if (response.statusCode == 200) {
       return WeatherResponse.fromJson(jsonDecode(response.body));

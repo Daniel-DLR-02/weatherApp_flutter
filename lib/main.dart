@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/pages/home.dart';
-import 'package:weather_app/pages/map.dart';
+import 'package:weather_app/pages/pantalla_seleccion_mapa.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/ciudades': (context) => Map()
+        '/ciudades': (context) => const MapClickPage()
       },
     );
   }
