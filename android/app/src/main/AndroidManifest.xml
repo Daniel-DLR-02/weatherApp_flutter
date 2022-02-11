@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.weather_app">
    <application
-        android:label="weather_app"
+        android:label="El tiempo"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyC4GrRSpLl5avrtfOK9OSKrGHOiI1dXoms"/>
         <activity
