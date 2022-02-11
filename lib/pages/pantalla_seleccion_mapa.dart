@@ -7,7 +7,7 @@ import '../styles/styles.dart';
 import '../utils/data.dart';
 
 CameraPosition _kInitialPosition =
-    const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 11.0);
+    const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 0.01);
 
 class MapClickPage extends GoogleMapExampleAppPage {
   const MapClickPage() : super(const Icon(Icons.mouse), 'Map click');
