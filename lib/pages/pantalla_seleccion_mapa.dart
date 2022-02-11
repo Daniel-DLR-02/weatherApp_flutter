@@ -41,6 +41,8 @@ class _MapClickBodyState extends State<_MapClickBody> {
     } else {
       _kInitialPosition =
           const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 0.01);
+      PreferenceUtils.setDouble('lat', Data.lat);
+      PreferenceUtils.setDouble('lng', Data.long);
       return _lastTap = const LatLng(Data.lat, Data.long);
     }
   }
