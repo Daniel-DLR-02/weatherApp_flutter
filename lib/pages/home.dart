@@ -41,9 +41,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 250), vsync: this);
   late bool _nightTheme;
 
-
   late Future<WeatherResponse> tiempoActualFuture;
-  late Future<List<Hourly>> temps;  
+  late Future<List<Hourly>> temps;
   late Future<List<Daily>> tempsWeek;
 
   late String formattedDate;
@@ -53,11 +52,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     _nightTheme = false;
     super.initState();
-    PreferenceUtils.init().whenComplete(() => setState((){}));
-    formattedDate =
-        DateFormat('EEEE,dd MMMM yyyy').format(DateTime.now());
+    PreferenceUtils.init().whenComplete(() => setState(() {}));
+    formattedDate = DateFormat('EEEE,dd MMMM yyyy').format(DateTime.now());
     kelvinDegrees = -273.15;
-    
+
     controller = AnimationController(
         duration: const Duration(milliseconds: 250), vsync: this);
     animation1 = ColorTween(
@@ -92,13 +90,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    tiempoActualFuture=getCurrentWeatherCity(
+    tiempoActualFuture = getCurrentWeatherCity(
         PreferenceUtils.getDouble('lat').toString(),
         PreferenceUtils.getDouble('lng').toString(),
         Data.apiKey);
     temps = fetchHourly(PreferenceUtils.getDouble('lat').toString(),
         PreferenceUtils.getDouble('lng').toString(), Data.apiKey);
-    tempsWeek=fetchWeekely(PreferenceUtils.getDouble('lat').toString(),
+    tempsWeek = fetchWeekely(PreferenceUtils.getDouble('lat').toString(),
         PreferenceUtils.getDouble('lng').toString(), Data.apiKey);
     return Scaffold(
         body: SingleChildScrollView(
@@ -159,8 +157,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 size: 30.0,
                               ),
                               tooltip: 'Abrir lista de ciudades',
-                              onPressed: () =>
-                                  Navigator.popAndPushNamed(context, '/ciudades'),
+                              onPressed: () => Navigator.popAndPushNamed(
+                                  context, '/ciudades'),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 7.0),

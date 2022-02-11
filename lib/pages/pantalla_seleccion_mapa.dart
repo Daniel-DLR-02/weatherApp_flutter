@@ -29,8 +29,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
   _MapClickBodyState();
 
   GoogleMapController? mapController;
-  LatLng _lastTap = LatLng(Data.lat, Data.long);
-  LatLng? _lastLongPress;
+  LatLng _lastTap = const LatLng(Data.lat, Data.long);
 
   coor() async {
     if (PreferenceUtils.getDouble('lat') != null) {
@@ -38,17 +37,16 @@ class _MapClickBodyState extends State<_MapClickBody> {
       double? lng = PreferenceUtils.getDouble('lng');
 
       _lastTap = LatLng(lat!, lng!);
-      _kInitialPosition = CameraPosition(target: _lastTap, zoom: 10.0);
+      _kInitialPosition = CameraPosition(target: _lastTap, zoom: 0.01);
     } else {
-      _kInitialPosition = const CameraPosition(
-          target: LatLng(Data.lat, Data.long), zoom: 11.0);
-      return _lastTap =  const LatLng(Data.lat, Data.long);
+      _kInitialPosition =
+          const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 0.01);
+      return _lastTap = const LatLng(Data.lat, Data.long);
     }
   }
 
   @override
   void initState() {
-    PreferenceUtils.init().whenComplete(() => setState((){}));
     coor();
     super.initState();
   }
@@ -61,6 +59,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
       initialCameraPosition: _kInitialPosition,
       onTap: (LatLng pos) async {
         setState(() {
+          coor();
           _lastTap = pos;
         });
         PreferenceUtils.setDouble('lat', pos.latitude);
@@ -68,9 +67,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
       },
       markers: <Marker>{_createMarker()},
       onLongPress: (LatLng pos) {
-        setState(() {
-          _lastLongPress = pos;
-        });
+        setState(() {});
       },
     );
 
@@ -98,7 +95,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState((){});
+          setState(() {});
           Navigator.popAndPushNamed(context, '/');
         },
         backgroundColor: Styles.dayBackGroundColor,
@@ -110,12 +107,13 @@ class _MapClickBodyState extends State<_MapClickBody> {
   void onMapCreated(GoogleMapController controller) async {
     setState(() {
       mapController = controller;
+      coor();
     });
   }
 
   Marker _createMarker() {
     return Marker(
-      markerId: MarkerId("marker_1"),
+      markerId: const MarkerId("marker_1"),
       position: _lastTap,
     );
   }

@@ -1,7 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceUtils {
- 
+  @override
+  void initState() {
+    _prefs;
+  }
+
   static late SharedPreferences _prefs;
 
   // call this method from iniState() function of mainApp().
@@ -9,7 +13,7 @@ class PreferenceUtils {
     _prefs = await SharedPreferences.getInstance();
     return _prefs;
   }
-  
+
   //sets
   static Future<bool> setBool(String key, bool value) async =>
       await _prefs.setBool(key, value);
@@ -27,7 +31,8 @@ class PreferenceUtils {
       await _prefs.setStringList(key, value);
 
   //gets
-  static bool getBool(String key, {bool defValue = false}) => _prefs.getBool(key)?? defValue;
+  static bool getBool(String key, {bool defValue = false}) =>
+      _prefs.getBool(key) ?? defValue;
 
   static double? getDouble(String key) => _prefs.getDouble(key);
 
