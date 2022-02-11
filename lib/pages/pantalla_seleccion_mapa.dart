@@ -6,8 +6,9 @@ import 'package:weather_app/utils/prefence.dart';
 import '../styles/styles.dart';
 import '../utils/data.dart';
 
-CameraPosition _kInitialPosition =
-    const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 0.01);
+LatLng location = const LatLng(Data.lat, Data.long);
+
+CameraPosition _kGooglePlex = CameraPosition(target: location, zoom: 11.0);
 
 class MapClickPage extends GoogleMapExampleAppPage {
   const MapClickPage() : super(const Icon(Icons.mouse), 'Map click');
@@ -29,21 +30,18 @@ class _MapClickBodyState extends State<_MapClickBody> {
   _MapClickBodyState();
 
   GoogleMapController? mapController;
-  LatLng _lastTap = const LatLng(Data.lat, Data.long);
 
   coor() async {
     if (PreferenceUtils.getDouble('lat') != null) {
       double? lat = PreferenceUtils.getDouble('lat');
       double? lng = PreferenceUtils.getDouble('lng');
 
-      _lastTap = LatLng(lat!, lng!);
-      _kInitialPosition = CameraPosition(target: _lastTap, zoom: 0.01);
+      location = LatLng(lat!, lng!);
+      _kGooglePlex = CameraPosition(target: location, zoom: 11.0);
     } else {
-      _kInitialPosition =
-          const CameraPosition(target: LatLng(Data.lat, Data.long), zoom: 0.01);
       PreferenceUtils.setDouble('lat', Data.lat);
       PreferenceUtils.setDouble('lng', Data.long);
-      return _lastTap = const LatLng(Data.lat, Data.long);
+      return location = const LatLng(Data.lat, Data.long);
     }
   }
 
@@ -58,11 +56,14 @@ class _MapClickBodyState extends State<_MapClickBody> {
     final GoogleMap googleMap = GoogleMap(
       mapType: MapType.hybrid,
       onMapCreated: onMapCreated,
-      initialCameraPosition: _kInitialPosition,
+      initialCameraPosition: _kGooglePlex,
       onTap: (LatLng pos) async {
         setState(() {
           coor();
-          _lastTap = pos;
+          location = pos;
+
+          _kGooglePlex = CameraPosition(
+              target: LatLng(pos.latitude, pos.longitude), zoom: 11.0);
         });
         PreferenceUtils.setDouble('lat', pos.latitude);
         PreferenceUtils.setDouble('lng', pos.longitude);
@@ -95,28 +96,34 @@ class _MapClickBodyState extends State<_MapClickBody> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: columnChildren,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {});
-          Navigator.popAndPushNamed(context, '/');
-        },
-        backgroundColor: Styles.dayBackGroundColor,
-        child: const Icon(Icons.navigation),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 45.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            setState(() {});
+            Navigator.popAndPushNamed(context, '/');
+          },
+          backgroundColor: Styles.dayBackGroundColor,
+          child: const Icon(Icons.navigation),
+        ),
       ),
     );
   }
 
   void onMapCreated(GoogleMapController controller) async {
-    setState(() {
-      mapController = controller;
-      coor();
-    });
+    coor();
+    _kGooglePlex = CameraPosition(
+        target: LatLng(PreferenceUtils.getDouble('lat')!,
+            PreferenceUtils.getDouble('lng')!),
+        zoom: 11.0);
+    mapController = controller;
+    setState(() {});
   }
 
   Marker _createMarker() {
     return Marker(
       markerId: const MarkerId("marker_1"),
-      position: _lastTap,
+      position: location,
     );
   }
 }
